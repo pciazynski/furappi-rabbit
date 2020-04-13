@@ -77,14 +77,14 @@ function doKeyDown(e) {
 }
 
 function drawBall(ctx, c) {
-  ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
+  ctx.fillStyle = 'rgba(0, 0, 200, 1)';
   ctx.beginPath();
   ctx.arc(c.x, c.y, c.r, 0, 2 * Math.PI);
   ctx.fill();
 }
 
 function drawRectangle(ctx, r) {
-  ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
+  ctx.fillStyle = 'rgba(0, 0, 200, 1)';
   ctx.fillRect(r.x, r.y, r.w, r.h);
 }
 
