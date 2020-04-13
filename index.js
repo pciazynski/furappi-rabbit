@@ -3,6 +3,8 @@ const dy = 1;
 const width = 25;
 const height = 100;
 
+let points = -1;
+
 let refreshing = false;
 
 function getRandomInt(min, max) {
@@ -20,8 +22,8 @@ function Circle(x, y, r) {
 function Rectangle(x, y, w, h) {
   this.x = x;
   this.y = y;
-  this.width = w;
-  this.height = h;
+  this.w = w;
+  this.h = h;
 }
 
 function Rectangles() {
@@ -45,6 +47,23 @@ function createNewColumn() {
 
   rectangles.add(rectangle);
   rectangles.add(rectangle2);
+
+  points += 1;
+}
+
+function rectCircleColliding(circle, rect) {
+  const distX = Math.abs(circle.x - rect.x - rect.w / 2);
+  const distY = Math.abs(circle.y - rect.y - rect.h / 2);
+
+  if (distX > (rect.w / 2 + circle.r)) { return false; }
+  if (distY > (rect.h / 2 + circle.r)) { return false; }
+
+  if (distX <= (rect.w / 2)) { return true; }
+  if (distY <= (rect.h / 2)) { return true; }
+
+  const deltax = distX - rect.w / 2;
+  const deltay = distY - rect.h / 2;
+  return (deltax * deltax + deltay * deltay <= (circle.r * circle.r));
 }
 
 createNewColumn();
@@ -66,13 +85,15 @@ function drawBall(ctx, c) {
 
 function drawRectangle(ctx, r) {
   ctx.fillStyle = 'rgba(0, 0, 200, 0.5)';
-  ctx.fillRect(r.x, r.y, r.width, r.height);
+  ctx.fillRect(r.x, r.y, r.w, r.h);
 }
 
 function draw(canvas) {
   if (refreshing) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    document.getElementById('points').innerHTML = points;
 
     drawBall(ctx, circle);
     circle.y += dy;
@@ -90,10 +111,19 @@ function draw(canvas) {
       rectangles.clear();
       createNewColumn();
     }
+
+    if (rectCircleColliding(circle, rectangles.rectangles[0])
+      || rectCircleColliding(circle, rectangles.rectangles[1])) {
+      refreshing = false;
+
+      ctx.fillStyle = 'blue';
+      ctx.font = 'bold 36px Arial';
+      ctx.fillText("You've lost!!!", (canvas.width / 2) - 17, (canvas.height / 2) + 8);
+    }
   }
 }
 
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-consts
 function init() {
   window.addEventListener('keydown', doKeyDown, false);
   const canvas = document.getElementById('canvas');
